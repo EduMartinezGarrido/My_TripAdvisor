@@ -119,6 +119,8 @@ def vuelazos(ciudad_ida,ciudad_vuelta,fecha_ida,fecha_vuelta):
         i = i.replace("\n"," ")
         llegada_vuelta.append(i)
     
+    driver.quit()
+    
     df = pd.DataFrame(list(zip(precios,salida_ida,llegada_ida,salida_vuelta,llegada_vuelta)), columns = ['Precio',f'Salida_{ciudad_ida}',f'Llegada_{ciudad_vuelta}',f'Salida_{ciudad_vuelta}',f'Llegada_{ciudad_ida}'])
     
     return df

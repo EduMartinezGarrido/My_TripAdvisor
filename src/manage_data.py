@@ -15,6 +15,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+import src.Funciones as fun
+from functools import reduce
+import operator
+import folium
+from folium import Choropleth, Circle, Marker, Icon, Map
 
 def tiempazo(ciudad):
     
@@ -120,7 +125,7 @@ def vuelazos(ciudad_ida,ciudad_vuelta,fecha_ida,fecha_vuelta):
         llegada_vuelta.append(i)
     
     driver.quit()
-    
+
     df = pd.DataFrame(list(zip(precios,salida_ida,llegada_ida,salida_vuelta,llegada_vuelta)), columns = ['Precio',f'Salida_{ciudad_ida}',f'Llegada_{ciudad_vuelta}',f'Salida_{ciudad_vuelta}',f'Llegada_{ciudad_ida}'])
     
     return df
@@ -225,17 +230,113 @@ def hotelazo(ciudad,check_in,check_out):
         calle = calle.text
         address.append(calle)
         driver.quit()
-    '''
-    latitud = []
-    longitud = []
-    for i in address:
-        geolocator = Nominatim(user_agent="edu", timeout=5)
-        location = geolocator.geocode(i)
-        lat = location.latitude
-        lon = location.longitude
-        latitud.append(lat)
-        longitud.append(lon)'''
-
     
     df = pd.DataFrame(list(zip(nombre,precio,address)), columns = ['Nombre','Precio','Direccion'])
     return df
+
+
+def planazos(ciudad_destino):
+    geolocator = Nominatim(user_agent="edu")
+    location = geolocator.geocode(ciudad_destino)
+    lat = location.latitude
+    lon = location.longitude
+
+    url_query = 'https://api.foursquare.com/v2/venues/explore'
+
+    queries_HS = ["Historic Site"]
+    queries_museum = ["Museum"]
+    queries_bar = ["Nightclub"]
+    queries_food = ["Food"]
+    queries_hotel = ["Hotel"]
+
+    tok1= os.getenv("Client_Id")
+    tok2= os.getenv("Client_Secret")
+
+    HS = fun.get_data(lat, lon,url_query,*queries_HS)
+    museum = fun.get_data(lat, lon,url_query,*queries_museum)
+    nightclub = fun.get_data(lat, lon,url_query,*queries_bar)
+    food = fun.get_data(lat, lon,url_query,*queries_food)
+    hoteles = fun.get_data(lat, lon,url_query,*queries_hotel)
+
+    HS = HS.get("Historic Site").get("response").get("groups")[0].get("items")
+    museum = museum.get("Museum").get("response").get("groups")[0].get("items")
+    nightclub = nightclub.get("Nightclub").get("response").get("groups")[0].get("items")
+    food = food.get("Food").get("response").get("groups")[0].get("items")
+    hoteles = hoteles.get("Hotel").get("response").get("groups")[0].get("items")
+
+    df_HS = fun.crear_dataframe(HS)
+    df_museum = fun.crear_dataframe(museum)
+    df_nightclub = fun.crear_dataframe(nightclub)
+    df_food = fun.crear_dataframe(food)
+    df_hoteles = fun.crear_dataframe(hoteles)
+
+    df_HS = df_HS[:10]
+    df_HS = (df_HS.assign(categoria = "historic site"))
+
+    df_hoteles = df_hoteles[:10]
+    df_hoteles = (df_hoteles.assign(categoria = "hotels"))
+
+    df_food = df_food[:10]
+    df_food = (df_food.assign(categoria = "food"))
+
+    df_museum = df_museum[:10]
+    df_museum = (df_museum.assign(categoria = "museum"))
+
+    df_nightclub = df_nightclub[:10]
+    df_nightclub = (df_nightclub.assign(categoria = "nightclub"))
+
+    df = pd.concat([df_food,df_hoteles,df_HS,df_museum,df_nightclub],ignore_index=True)
+
+    direcc = []
+    for i, row in df.iterrows():
+        lat = row["latitud"]
+        lon = row["longitud"]
+        location = geolocator.reverse(f'{lat}'"," f'{lon}')
+        calle = location.address
+        direcc.append(calle)
+
+    df["Address"] = direcc
+    return df
+
+def folium_planes(df_planes,lat,lon):
+    map_2 = Map(location=[f'{lat}',f'{lon}'],zoom_start=14.5)
+    for i,row in df_planes.iterrows():
+
+        distrito = {
+        "location" : [row["latitud"],row["longitud"]],
+        "tooltip" : row["name"]
+        }
+        if row["categoria"] == "historic site":
+            icon = Icon(color = "lightblue",
+                    prefix = "fa",
+                    icon = "eye",
+                    icon_color = "black")
+            
+                        
+        elif row["categoria"] == "nightclub":
+            icon = Icon(color = "lightred",
+                    prefix = "fa",
+                    icon = "glass",
+                    icon_color = "black")
+                        
+        elif row["categoria"] == "food":
+            icon = Icon(color = "beige",
+                    prefix = "fa",
+                    icon = "cutlery",
+                    icon_color = "black")
+            
+        elif row["categoria"] == "hotels":
+            icon = Icon(color = "cadetblue",
+                    prefix = "fa",
+                    icon = "h-square",
+                    icon_color = "white")
+                        
+        else: 
+            icon = Icon(color = "lightblue",
+                    prefix = "fa",
+                    icon = "eye",
+                    icon_color = "black")
+        Marker(**distrito, icon = icon).add_to(map_2)
+    return map_2
+
+

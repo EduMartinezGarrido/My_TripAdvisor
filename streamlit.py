@@ -43,13 +43,13 @@ ciudad2 = str(ciudad2)
 
 fecha_ida = st.sidebar.text_input(
 
-    "Selecciona que día vas a salir (yy-mm-dd)"
+    "Selecciona que día vas a salir (yyyy-mm-dd)"
 )
 st.sidebar.write("Fecha salida", fecha_ida)
 
 fecha_vuelta = st.sidebar.text_input(
 
-    "Selecciona que día vas a volver (yy-mm-dd)"
+    "Selecciona que día vas a volver (yyyy-mm-dd)"
 )
 st.sidebar.write("Fecha vuelta", fecha_vuelta)
 
@@ -57,7 +57,7 @@ fecha_ida = str(fecha_ida)
 fecha_vuelta = str(fecha_vuelta)
 
 if  ciudad1 != "" and ciudad2 != "" and fecha_ida != "" and fecha_vuelta != "":
-    
+    '''
     time.sleep(3)
     st.dataframe(dat.tiempazo(ciudad2))
     tiempo = dat.tiempazo(ciudad2)
@@ -67,5 +67,26 @@ if  ciudad1 != "" and ciudad2 != "" and fecha_ida != "" and fecha_vuelta != "":
 
     st.dataframe(dat.vuelazos(ciudad1,ciudad2,fecha_ida,fecha_vuelta))
 
-    st.dataframe(dat.hotelazo(ciudad2,"17","18"))
+    dia_ida = fecha_ida.split("-")
+    dia_ida = dia_ida[2]
+    dia_vuelta = fecha_vuelta.split("-")
+    dia_vuelta = dia_vuelta[2]
+    st.dataframe(dat.hotelazo(ciudad2,dia_ida,dia_vuelta))
+    '''
+    x = ["historic site","hotels","museum", "food","nightclub"]
+    respuesta = st.selectbox('Which value do you want to explore?',x)
+    respuesta = str(respuesta)
+    df_planazos = dat.planazos(ciudad2)
+    df_planazos = df_planazos[df_planazos["categoria"] == respuesta]
+    df_planazos1 = df_planazos[["name","Address"]]
+    st.dataframe(df_planazos1)
 
+    geolocator = Nominatim(user_agent="edu")
+    location = geolocator.geocode(ciudad2)
+    lat = location.latitude
+    lon = location.longitude
+    lat = str(lat)
+    lon = str(lon)
+
+    mapa = dat.folium_planes(df_planazos,lat,lon)
+    folium_static(mapa)

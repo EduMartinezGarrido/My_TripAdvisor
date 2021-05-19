@@ -5,6 +5,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from functools import reduce
 import operator
+import streamlit as st
 
 def get_data (latitude, longitude, url_query, *args):
     d = {}
@@ -41,3 +42,16 @@ def crear_dataframe(diccionario):
         lista.append(paralista)
         df = pd.DataFrame(lista)
     return df
+
+
+def center_streamlit(path_):
+    col1, col2, col3 = st.beta_columns([1,6,1])
+
+    with col1:
+        st.write("")
+
+    with col2:
+        st.markdown(path_)
+
+    with col3:
+        st.write("")

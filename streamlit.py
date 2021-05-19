@@ -23,10 +23,28 @@ from folium import Choropleth, Circle, Marker, Icon, Map
 
 st.set_page_config(layout="wide")
 
-st.write("""
-# Mi súper Dashboard
-Empieza el viaje 🚀🚀🚀
-""")
+HTML_BANNER = """
+    <div style="background-color:#464e5f;padding:10px;border-radius:10px">
+    <h1 style="color:white;text-align:center;">My TrypAdvisor </h1>
+    </div>
+    """
+
+components.html(HTML_BANNER)
+
+st.markdown("<h1 style='text-align: center; color: #464e5f;'>Ready for the holidays 🚀</h1>", unsafe_allow_html=True)
+
+col1, col2, col3 = st.beta_columns([1,2,0.5])
+
+with col1:
+    st.write("")
+
+with col2:
+    st.markdown("![Alt Text](https://media.giphy.com/media/ehZzdZPnnQFDqNn0MF/giphy.gif)")
+
+with col3:
+    st.write("")
+
+
 
 
 ciudad1 = st.sidebar.text_input(
@@ -56,30 +74,40 @@ st.sidebar.write("Fecha vuelta", fecha_vuelta)
 fecha_ida = str(fecha_ida)
 fecha_vuelta = str(fecha_vuelta)
 
+st.markdown("")
+st.markdown("")
+st.markdown("")
+st.markdown("")
+st.markdown("")
+
+
 if  ciudad1 != "" and ciudad2 != "" and fecha_ida != "" and fecha_vuelta != "":
-    '''
+    
     time.sleep(3)
-    st.dataframe(dat.tiempazo(ciudad2))
+    st.markdown("<h1 style='text-align: center; color: #464e5f;'>¿Qué tiempo tendré en los próximos días?</h1>", unsafe_allow_html=True)
+    st.table(dat.tiempazo(ciudad2))
     tiempo = dat.tiempazo(ciudad2)
     fig = px.line(tiempo, x=tiempo.date, y=tiempo.columns[1:3],template= "ggplot2")
     st.plotly_chart(fig)
 
 
+    imagen2 =  Image.open("images/vuelos-de-nuevo.jpeg")
+    st.image(imagen2)
     st.dataframe(dat.vuelazos(ciudad1,ciudad2,fecha_ida,fecha_vuelta))
 
     dia_ida = fecha_ida.split("-")
     dia_ida = dia_ida[2]
     dia_vuelta = fecha_vuelta.split("-")
     dia_vuelta = dia_vuelta[2]
-    st.dataframe(dat.hotelazo(ciudad2,dia_ida,dia_vuelta))
-    '''
-    x = ["historic site","hotels","museum", "food","nightclub"]
-    respuesta = st.selectbox('Which value do you want to explore?',x)
+    st.table(dat.hotelazo(ciudad2,dia_ida,dia_vuelta))
+    
+    x = ["<selecciona>","historic site","hotels","museum", "food","nightclub"]
+    respuesta = st.selectbox('¿Qué quieres hacer?',x)
     respuesta = str(respuesta)
     df_planazos = dat.planazos(ciudad2)
     df_planazos = df_planazos[df_planazos["categoria"] == respuesta]
     df_planazos1 = df_planazos[["name","Address"]]
-    st.dataframe(df_planazos1)
+    st.table(df_planazos1)
 
     geolocator = Nominatim(user_agent="edu")
     location = geolocator.geocode(ciudad2)

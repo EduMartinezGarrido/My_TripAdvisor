@@ -1,4 +1,5 @@
 import requests
+import streamlit as st
 import re
 import pandas as pd
 import numpy as np
@@ -20,7 +21,7 @@ from functools import reduce
 import operator
 import folium
 from folium import Choropleth, Circle, Marker, Icon, Map
-
+@st.cache
 def tiempazo(ciudad):
     
     #sacamos coordenadas
@@ -55,7 +56,7 @@ def tiempazo(ciudad):
 def provincias():
     provincias= ["Álava", "Albacete", "Alicante", "Almería", "Asturias", "Ávila", "Badajoz", "Barcelona", "Burgos", "Cáceres", "Cádiz", "Cantabria", "Castellón", "Ciudad Real", "Córdoba", "Cuenca", "Gerona", "Granada", "Guadalajara", "Guipúzcoa", "Huelva", "Huesca", "Islas Baleares", "Jaén", "La Coruña", "La Rioja", "Las Palmas", "León", "Lérida", "Lugo", "Madrid", "Málaga", "Murcia", "Navarra", "Orense", "Palencia", "Pontevedra", "Salamanca", "Santa Cruz de Tenerife", "Segovia", "Sevilla", "Soria", "Tarragona", "Teruel", "Toledo", "Valencia", "Valladolid", "Vizcaya", "Zamora", "Zaragoza"]
     return provincias
-
+@st.cache
 def vuelazos(ciudad_ida,ciudad_vuelta,fecha_ida,fecha_vuelta):
     
     dicc = {"Alicante":"ALC","Almeria":"LEI","Badajoz":"BJZ","Barcelona":"BCN","Bilbao":"BIO","Burgos":"RGS","Castellon":"CDT",
@@ -129,7 +130,7 @@ def vuelazos(ciudad_ida,ciudad_vuelta,fecha_ida,fecha_vuelta):
     df = pd.DataFrame(list(zip(precios,salida_ida,llegada_ida,salida_vuelta,llegada_vuelta)), columns = ['Precio',f'Salida_{ciudad_ida}',f'Llegada_{ciudad_vuelta}',f'Salida_{ciudad_vuelta}',f'Llegada_{ciudad_ida}'])
     
     return df
-
+@st.cache
 def hotelazo(ciudad,check_in,check_out):
     opciones=Options()
 

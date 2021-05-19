@@ -235,7 +235,7 @@ def hotelazo(ciudad,check_in,check_out):
     df = pd.DataFrame(list(zip(nombre,precio,address)), columns = ['Nombre','Precio','Direccion'])
     return df
 
-
+@st.cache
 def planazos(ciudad_destino):
     geolocator = Nominatim(user_agent="edu")
     location = geolocator.geocode(ciudad_destino)
@@ -298,7 +298,7 @@ def planazos(ciudad_destino):
 
     df["Address"] = direcc
     return df
-
+@st.cache
 def folium_planes(df_planes,lat,lon):
     map_2 = Map(location=[f'{lat}',f'{lon}'],zoom_start=14.5)
     for i,row in df_planes.iterrows():

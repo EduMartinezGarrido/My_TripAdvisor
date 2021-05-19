@@ -25,7 +25,7 @@ st.set_page_config(layout="wide")
 
 HTML_BANNER = """
     <div style="background-color:#464e5f;padding:10px;border-radius:10px">
-    <h1 style="color:white;text-align:center;">My TrypAdvisor </h1>
+    <h1 style="color:white;text-align:center;">My TripAdvisor </h1>
     </div>
     """
 
@@ -88,21 +88,33 @@ if  ciudad1 != "" and ciudad2 != "" and fecha_ida != "" and fecha_vuelta != "":
     st.table(dat.tiempazo(ciudad2))
     tiempo = dat.tiempazo(ciudad2)
     fig = px.line(tiempo, x=tiempo.date, y=tiempo.columns[1:3],template= "ggplot2")
-    st.plotly_chart(fig)
+    col1, col2, col3 = st.beta_columns([1,2,0.5])
+
+    with col1:
+        st.write("")
+
+    with col2:
+        st.plotly_chart(fig)
+
+    with col3:
+        st.write("")
+
+    
 
 
-    imagen2 =  Image.open("images/vuelos-de-nuevo.jpeg")
-    st.image(imagen2)
-    st.dataframe(dat.vuelazos(ciudad1,ciudad2,fecha_ida,fecha_vuelta))
+    st.markdown("<h1 style='text-align: center; color: #464e5f;'>Muéstrame los vuelos</h1>", unsafe_allow_html=True)
+    st.table(dat.vuelazos(ciudad1,ciudad2,fecha_ida,fecha_vuelta))
 
+    st.markdown("<h1 style='text-align: center; color: #464e5f;'>Muéstrame hoteles</h1>", unsafe_allow_html=True)
     dia_ida = fecha_ida.split("-")
     dia_ida = dia_ida[2]
     dia_vuelta = fecha_vuelta.split("-")
     dia_vuelta = dia_vuelta[2]
     st.table(dat.hotelazo(ciudad2,dia_ida,dia_vuelta))
     
-    x = ["<selecciona>","historic site","hotels","museum", "food","nightclub"]
-    respuesta = st.selectbox('¿Qué quieres hacer?',x)
+    st.markdown("<h1 style='text-align: center; color: #464e5f;'>¿Qué puedo hacer en la ciudad?</h1>", unsafe_allow_html=True)
+    x = ["","historic site","hotels","museum", "food","nightclub"]
+    respuesta = st.selectbox('',x)
     respuesta = str(respuesta)
     df_planazos = dat.planazos(ciudad2)
     df_planazos = df_planazos[df_planazos["categoria"] == respuesta]
@@ -117,4 +129,16 @@ if  ciudad1 != "" and ciudad2 != "" and fecha_ida != "" and fecha_vuelta != "":
     lon = str(lon)
 
     mapa = dat.folium_planes(df_planazos,lat,lon)
-    folium_static(mapa)
+    col1, col2, col3 = st.beta_columns([1,2,0.5])
+
+    with col1:
+        st.write("")
+
+    with col2:
+        folium_static(mapa)
+
+    with col3:
+        st.write("")
+
+    if st.button("Party"):
+            st.balloons()

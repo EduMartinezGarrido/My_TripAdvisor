@@ -24,7 +24,7 @@ from folium import Choropleth, Circle, Marker, Icon, Map
 st.set_page_config(layout="wide")
 
 HTML_BANNER = """
-    <div style="background-color:#464e5f;padding:10px;border-radius:10px">
+    <div style="background-color:#B78C80;padding:10px;border-radius:10px">
     <h1 style="color:white;text-align:center;">My TripAdvisor </h1>
     </div>
     """
@@ -87,7 +87,10 @@ if  ciudad1 != "" and ciudad2 != "" and fecha_ida != "" and fecha_vuelta != "":
     st.markdown("<h1 style='text-align: center; color: #464e5f;'>¿Qué tiempo tendré en los próximos días?</h1>", unsafe_allow_html=True)
     st.table(dat.tiempazo(ciudad2))
     tiempo = dat.tiempazo(ciudad2)
-    fig = px.line(tiempo, x=tiempo.date, y=tiempo.columns[1:3],template= "ggplot2")
+    fig = px.line(tiempo, x=tiempo.date, y=tiempo.columns[1:3],color_discrete_map={"temperature_max": "yellow", "temperature_min": "blue"},template= "seaborn")
+    fig.update_yaxes(title_text="Temperatura")
+    fig.update_xaxes(title_text="Fecha")
+    
     col1, col2, col3 = st.beta_columns([1,2,0.5])
 
     with col1:

@@ -64,11 +64,11 @@ def vuelazos(ciudad_ida,ciudad_vuelta,fecha_ida,fecha_vuelta):
     "Lanzarote":"ACE","Gran_Canaria":"LPA","La_Coruña":"LCG","La_Gomera":"GMZ","Leon":"LEN","Logroño":"RJL","Albacete":"ABC",
     "Madrid":"MAD","Malaga":"AGP","Melilla":"MLN","Menorca":"MAH","Murcia":"MJV","Asturias":"OVD","Mallorca":"PMI","La_Palma":"SPC",
     "Pamplona":"PNA","Reus":"REU","Sabadell":"QSA","Salamanca":"SLM","Santiago_de_Compostela":"SCQ","Santander":"SDR","Sevilla":"SVQ","Tenerife_Norte":"TFN",
-    "Tenerife_Sur":"TFS","Valencia":"VLC","Valladolid":"VLL","El_Hierro":"VDE","Vigo":"VGO","Vitoria":"VIT","Zaragoza":"ZAZ"
+    "Tenerife_Sur":"TFS","Valencia":"VLC","Valladolid":"VLL","El_Hierro":"VDE","Vigo":"VGO","Vitoria":"VIT","Zaragoza":"ZAZ","Nueva York":"NYC","Orlando":"MCO","Paris":"PAR","Londres":"LON","Sidney":"SYD","San Francisco":"SFO"
            }
     
     options =  webdriver.ChromeOptions()
-    options.add_argument('--start-maximized')
+    #options.add_argument('--start-maximized')
     options.add_argument('--disable-extensions')
 
     driver = webdriver.Chrome("./chromedriver")
@@ -298,7 +298,7 @@ def planazos(ciudad_destino):
 
     df["Address"] = direcc
     return df
-@st.cache
+#@st.cache
 def folium_planes(df_planes,lat,lon):
     map_2 = Map(location=[f'{lat}',f'{lon}'],zoom_start=14.5)
     for i,row in df_planes.iterrows():
